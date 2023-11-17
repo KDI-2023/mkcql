@@ -5,13 +5,18 @@ from testdb.const import *
 
 dirname = os.path.dirname(os.path.abspath(os.path.expanduser(__file__)))
 
-data = json.loads(open(os.path.join(dirname, 'testdb/uuid_all.json'), 'rb').read())
+data = json.loads(open(
+    os.path.join(dirname, 'testdb/uuid_all.json'),
+    'rb'
+).read())
 
 f = open('jlutag.cql', 'wb')
 
-def w(s: str)->None:
+
+def w(s: str) -> None:
     s = str(s)+'\n\n'
     f.write(s.encode('utf8'))
+
 
 created = list()
 
@@ -34,5 +39,6 @@ for i in data:
                 else:
                     w("CREATE %s" % dst_cql)
 
-
-                w("MATCH %s\nMATCH %s WHERE NOT EXISTS {MATCH (src2:Artwork)<-[]-(dst:Character)}\nCREATE (src)<-[:_IN]-(dst)" % (src_cql, dst_cql))
+                w('''MATCH %s
+MATCH %s WHERE NOT EXISTS {MATCH (src2:Artwork)<-[]-(dst:Character)}
+CREATE (src)<-[:_IN]-(dst)''' % (src_cql, dst_cql))
